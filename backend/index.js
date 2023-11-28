@@ -12,22 +12,34 @@ app.use(express.static(path.join(__dirname, '/public')));
 const server = createServer(app);
 const wss = new WebSocket.Server({ server });
 
-wss.on('connection', function (ws) {
-  const id = setInterval(function () {
-    ws.send(JSON.stringify(process.memoryUsage()), function () {
-      //
-      // Ignoring errors.
-      //
-    });
-  }, 1000);
-  console.log('started client interval');
+wss.on('connection', socket => {
+  // const id = setInterval(function () {
+  //   ws.send(JSON.stringify(process.memoryUsage()), function () {
+  //     //
+  //     // Ignoring errors.
+  //     //
+  //   });
+  // }, 1000);
+  // console.log('started client interval');
 
-  ws.on('close', function () {
-    console.log('stopping client interval');
-    clearInterval(id);
+  // ws.on('close', function () {
+  //   console.log('stopping client interval');
+  //   clearInterval(id);
+  // })
+
+  console.log('Client connected');
+
+  socket.on('message', (message) => {
+    const keyPressed = JSON.parse(message.toString()).key
+    console.log('Received:', keyPressed);
+    socket.send("Go " + keyPressed)
+  });
+
+  socket.on('close', () => {
+    console.log('Client disconnected');
   });
 });
 
 server.listen(8080, function () {
-  console.log('Listening on http://0.0.0.0:8080');
+  console.log('Listening on http://localhost:8080');
 });

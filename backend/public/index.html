@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Server stats</title>
-    <style>
-      table, td {
-        border: 1px solid #333;
-      }
 
-      thead {
-        background-color: #333;
-        color: #fff;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Server stats</h1>
-    <table>
+<head>
+  <meta charset="utf-8">
+  <title>Server stats</title>
+  <style>
+    table,
+    td {
+      border: 1px solid #333;
+    }
+
+    thead {
+      background-color: #333;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <h1>Server stats</h1> -->
+  <!-- <table>
       <thead>
         <tr>
           <th colspan="2">Memory usage</th>
@@ -40,28 +43,45 @@
           <td id="external"></td>
         </tr>
       </tbody>
-    </table>
-    <script>
-      (function() {
-        const rss = document.getElementById('rss');
-        const heapTotal = document.getElementById('heapTotal');
-        const heapUsed = document.getElementById('heapUsed');
-        const external = document.getElementById('external');
+    </table> -->
+  <script>
+    // (function() {
+    //   const rss = document.getElementById('rss');
+    //   const heapTotal = document.getElementById('heapTotal');
+    //   const heapUsed = document.getElementById('heapUsed');
+    //   const external = document.getElementById('external');
 
-        // will not use tls if the connection is not made over https
-        const protocol = window.location.protocol.includes('https') ? 'wss': 'ws'
-        const ws = new WebSocket(`${protocol}://${location.host}`);
+    //   // will not use tls if the connection is not made over https
+    //   const protocol = window.location.protocol.includes('https') ? 'wss': 'ws'
+    //   const ws = new WebSocket(`${protocol}://${location.host}`);
 
 
-        ws.onmessage = function(event) {
-          const data = JSON.parse(event.data);
+    //   ws.onmessage = function(event) {
+    //     const data = JSON.parse(event.data);
 
-          rss.textContent = data.rss;
-          heapTotal.textContent = data.heapTotal;
-          heapUsed.textContent = data.heapUsed;
-          external.textContent = data.external;
-        };
-      })();
-    </script>
-  </body>
+    //     rss.textContent = data.rss;
+    //     heapTotal.textContent = data.heapTotal;
+    //     heapUsed.textContent = data.heapUsed;
+    //     external.textContent = data.external;
+    //   };
+    // })();
+
+    const socket = new WebSocket(`ws://${location.host}`)
+
+    document.addEventListener('keydown', event => {
+      console.log('event key pressed', event.key)
+      socket.send(JSON.stringify({ key: event.key }))
+    })
+
+    socket.onmessage = (event) => {
+      console.log("From server " + event.data)
+      document.getElementById("gowhere").textContent = event.data
+    } 
+  </script>
+
+  <h1> hellooo </h1>
+  <button onclick="console.log('button click')"> Click me </button>
+  <h3 id="gowhere"> Go where? </h3>
+</body>
+
 </html>
