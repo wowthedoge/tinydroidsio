@@ -66,7 +66,7 @@
     //   };
     // })();
 
-    const socket = new WebSocket(`ws://${location.host}`)
+    const socket = new WebSocket(`ws://localhost:8080`)
 
     document.addEventListener('keydown', event => {
       console.log('event key pressed', event.key)
@@ -77,10 +77,15 @@
       console.log("From server " + event.data)
       document.getElementById("gowhere").textContent = event.data
     } 
+
+    const buttonClick = () => {
+      console.log("buttonClick")
+      socket.send(JSON.stringify({ key: 'buttonClick' }))
+    }
   </script>
 
   <h1> hellooo </h1>
-  <button onclick="console.log('button click')"> Click me </button>
+  <button onclick="buttonClick()"> Click me </button>
   <h3 id="gowhere"> Go where? </h3>
 </body>
 
