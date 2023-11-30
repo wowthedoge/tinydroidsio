@@ -45,7 +45,7 @@
   <div id="grid" class="grid"></div>
   <script>
     const protocol = window.location.protocol.includes('https') ? 'wss': 'ws'
-    const socket = new WebSocket(`${protocol}://oyster-app-oibaq.ondigitalocean.app:8080/`);
+    const socket = new WebSocket(`${protocol}://oyster-app-oibaq.ondigitalocean.app/`);
 
     document.addEventListener('keydown', event => {
       if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
