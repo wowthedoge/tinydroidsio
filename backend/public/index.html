@@ -44,7 +44,8 @@
   <h1 id="statusMessage">hellooo</h1>
   <div id="grid" class="grid"></div>
   <script>
-    const socket = new WebSocket(`ws://localhost:8080`);
+    const protocol = window.location.protocol.includes('https') ? 'wss': 'ws'
+    const socket = new WebSocket(`${protocol}://localhost:8080`);
 
     document.addEventListener('keydown', event => {
       if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
