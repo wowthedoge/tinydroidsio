@@ -1,0 +1,32 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(40, 20px);
+    grid-gap: 1px;
+  }
+
+  .cell {
+    width: 20px;
+    height: 20px;
+    background-color: #ddd;
+    border: 1px solid #aaa;
+  }
+
+  .red {
+    background-color: red;
+  }
+
+  .green {
+    background-color: green;
+  }
+
+  .blue {
+    background-color: blue;
+  }
+
+  .yellow {
+    background-color: yellow;
+  }
+
+  .blocked {
+    background-color: black;
+  }

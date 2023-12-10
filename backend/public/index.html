@@ -3,97 +3,15 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Server stats</title>
-  <style>
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(40, 1fr);
-      grid-gap: 1px;
-    }
-
-    .cell {
-      width: 20px;
-      height: 20px;
-      background-color: #ddd;
-      border: 1px solid #aaa;
-    }
-
-    .red {
-      background-color: red;
-    }
-
-    .green {
-      background-color: green;
-    }
-
-    .blue {
-      background-color: blue;
-    }
-
-    .yellow {
-      background-color: yellow;
-    }
-
-    .blocked {
-      background-color: black;
-    }
-  </style>
+  <title>tinydroidsio</title>
+  <link rel="stylesheet" href="styles.css"> 
+  <script src="index.js"></script>
 </head>
 
-<body>
+<body onload="initGame();">
   <h1 id="statusMessage">hellooo</h1>
+  <button id="restartButton" onclick="onClickRestart()"> Restart </button>
   <div id="grid" class="grid"></div>
-  <script>
-    const protocol = window.location.protocol.includes('https') ? 'wss': 'ws'
-    const socket = new WebSocket(`${protocol}://oyster-app-oibaq.ondigitalocean.app/`);
-
-    document.addEventListener('keydown', event => {
-      if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
-        socket.send(JSON.stringify({ key: event.key }));
-      }
-    });
-
-
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      // Handle game over
-      if (data.type === 'gameOver') {
-        document.getElementById('statusMessage').textContent = 'Game Over!';
-      }
-
-      // Check if it's the initial color assignment message
-      if (data.type === 'init') {
-        // Update the status message based on the assigned color
-        if (data.color === 'red') {
-          statusMessage.textContent = "You are red. Run away from the others!";
-        } else {
-          statusMessage.textContent = `You are ${data.color}. Catch red!`;
-        }
-      }
-
-      // Only render the grid if it's included in the message
-      if (data.grid) {
-        renderGrid(data.grid);
-      }
-    };
-
-    function renderGrid(grid) {
-      const gridContainer = document.getElementById('grid');
-      gridContainer.innerHTML = ''; // Clear existing grid
-
-      grid.forEach((row, y) => {
-        row.forEach((cell, x) => {
-          const cellDiv = document.createElement('div');
-          cellDiv.classList.add('cell', cell);
-          // cellDiv.classList.add(grid[y][x])
-          gridContainer.appendChild(cellDiv);
-        });
-      });
-    }
-    
-  </script>
 </body>
 
 </html>

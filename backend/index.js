@@ -16,14 +16,14 @@ let clientCount = 0
 let grid
 const gridWidth = 40;
 const gridHeight = 20;
-const clients = new Map(); // Map to track each client's square
+const clients = new Map();
 
 wss.on('connection', socket => {
-
   clientCount += 1
   console.log(`Client ${clientCount} connected`);
   let { x, y, color } = initializeClient(clientCount)
   const clientInfo = {
+    clientId: clientCount,
     x: x,
     y: y,
     color: color,
@@ -39,13 +39,32 @@ wss.on('connection', socket => {
   }));
 
   socket.on('message', (message) => {
-    const moveKey = JSON.parse(message.toString()).key;
-    if (moveKey) {
+    const key = JSON.parse(message.toString()).key;
+    if (key === 'restart') {
+      // Reinitialize each client using their clientId
+      clients.forEach((clientInfo, clientSocket) => {
+        const { x, y, color } = initializeClient(clientInfo.clientId);
+        clientInfo.x = x;
+        clientInfo.y = y;
+        clientInfo.color = color;
+        clientSocket.send(JSON.stringify({
+          type: 'init',
+          color: color,
+        }));
+      });
+
+      grid = initializeGrid(gridHeight, gridWidth);
+      broadcastRestart(wss)
+      updateBroadcastGrid(wss, clients, grid);
+      
+    }
+    else if (key) {
       // Update the client's square position based on the key
-      handleMovement(socket, moveKey, clients);
+      handleMovement(socket, key, clients);
       // Broadcast the updated grid to all clients
       updateBroadcastGrid(wss, clients, grid);
     }
+
   });
 
   socket.on('close', () => {
@@ -56,6 +75,8 @@ wss.on('connection', socket => {
     if (clientCount == 0) grid = null
   });
 });
+
+
 
 function handleMovement(socket, moveKey, clients) {
   const clientInfo = clients.get(socket);
@@ -112,7 +133,15 @@ function broadcastGameOver(wss) {
       client.send(gameOverMessage);
     }
   });
-  // Optionally reset the game or take other actions
+}
+
+function broadcastRestart(wss) {
+  const restartMessage = JSON.stringify({ type: 'restart' });
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(restartMessage);
+    }
+  });
 }
 
 function initializeGrid(gridHeight, gridWidth) {
@@ -138,6 +167,7 @@ function initializeGrid(gridHeight, gridWidth) {
 }
 
 function initializeClient(clientCount) {
+  console.log("initialize client")
   let x, y, color
   switch (clientCount) {
     case 1:
@@ -186,4 +216,5 @@ function updateBroadcastGrid(wss, clients, grid) {
 }
 
 server.listen(8080, function () {
+  console.log("server listening on port 8080")
 });
